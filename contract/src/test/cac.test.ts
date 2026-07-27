@@ -28,10 +28,7 @@ describe('VeriCred Compact Smart Contract', () => {
     const degreeHash = new Uint8Array(32).fill(99);
     const privateState = createCacPrivateState(secretKey, 385, degreeHash);
 
-    const gpaWitness = cacWitnesses.studentGpaScaled({
-      privateState,
-      contractState: {} as any,
-    });
+    const gpaWitness = cacWitnesses.studentGpaScaled({ privateState } as any);
 
     expect(gpaWitness[0]).toBe(privateState);
     expect(gpaWitness[1]).toBe(385n);
@@ -43,10 +40,7 @@ describe('VeriCred Compact Smart Contract', () => {
     const degreeHash = new Uint8Array(32).fill(202);
     const privateState = createCacPrivateState(secretKey, 395, degreeHash);
 
-    const secretKeyWitness = cacWitnesses.localSecretKey({
-      privateState,
-      contractState: {} as any,
-    });
+    const secretKeyWitness = cacWitnesses.localSecretKey({ privateState } as any);
 
     expect(secretKeyWitness[0]).toBe(privateState);
     expect(secretKeyWitness[1]).toEqual(secretKey);
@@ -58,10 +52,7 @@ describe('VeriCred Compact Smart Contract', () => {
     const degreeHash = new Uint8Array(32).fill(88);
     const privateState = createCacPrivateState(secretKey, 375, degreeHash);
 
-    const degreeWitness = cacWitnesses.degreeIdHash({
-      privateState,
-      contractState: {} as any,
-    });
+    const degreeWitness = cacWitnesses.degreeIdHash({ privateState } as any);
 
     expect(degreeWitness[0]).toBe(privateState);
     expect(degreeWitness[1]).toEqual(degreeHash);

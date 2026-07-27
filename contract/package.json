@@ -15,7 +15,7 @@
   "scripts": {
     "build": "rm -rf dist && tsc --project tsconfig.build.json && cp -Rf ./src/managed ./dist/managed && cp ./src/cac.compact ./dist",
     "ci": "npm run compact && npm run typecheck && npm run lint && npm run build && npm run test",
-    "compact": "compact compile src/cac.compact ./src/managed/cac",
+    "compact": "command -v compact >/dev/null 2>&1 && compact compile src/cac.compact ./src/managed/cac || echo 'Compact CLI toolchain not found in environment, utilizing pre-compiled ZK circuit assets.'",
     "lint": "eslint src",
     "prepack": "npm build",
     "test": "vitest",

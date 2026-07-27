@@ -18,15 +18,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
 
-      - name: Install Dependencies
+      - name: Install Root & Workspace Dependencies
         run: |
-          npm install
-          cd contract && npm install && cd ..
-          cd api && npm install && cd ..
-          cd bboard-cli && npm install && cd ..
-          cd bboard-ui && npm install && cd ..
+          npm install --no-audit
+          cd contract && npm install --no-audit && cd ..
+          cd api && npm install --no-audit && cd ..
+          cd bboard-cli && npm install --no-audit && cd ..
+          cd bboard-ui && npm install --no-audit && cd ..
 
       - name: Compile Compact Contracts
         run: |
