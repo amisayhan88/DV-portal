@@ -22,7 +22,6 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          cd demo
           npm install
           cd contract && npm install && cd ..
           cd api && npm install && cd ..
@@ -31,22 +30,22 @@ jobs:
 
       - name: Compile Compact Contracts
         run: |
-          cd demo/contract && npm run compact
+          cd contract && npm run compact
 
       - name: Typecheck TypeScript Codebases
         run: |
-          cd demo/contract && npm run typecheck
-          cd demo/api && npm run typecheck
-          cd demo/bboard-cli && npm run typecheck
-          cd demo/bboard-ui && npm run typecheck
+          cd contract && npm run typecheck
+          cd api && npm run typecheck
+          cd bboard-cli && npm run typecheck
+          cd bboard-ui && npm run typecheck
 
       - name: Execute Smart Contract Unit Tests
         run: |
-          cd demo && npm test
+          npm test
 
       - name: Build Production Packages
         run: |
-          cd demo/contract && npm run build
-          cd demo/api && npm run build
-          cd demo/bboard-cli && npm run build
-          cd demo/bboard-ui && npm run build
+          cd contract && npm run build
+          cd api && npm run build
+          cd bboard-cli && npm run build
+          cd bboard-ui && npm run build
