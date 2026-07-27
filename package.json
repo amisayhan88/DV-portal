@@ -1,7 +1,10 @@
 {
   "name": "@midnight-ntwrk/example-bboard",
   "version": "0.1.0",
-  "author": "IOG",
+  "author": "amisayhan88 <amisayhan88@gmail.com>",
+  "contributors": [
+    "amisayhan88 <https://github.com/amisayhan88>"
+  ],
   "license": "MIT",
   "private": true,
   "type": "module",
