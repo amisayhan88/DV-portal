@@ -72,7 +72,7 @@ const LandingPage: React.FC = () => {
 
             {!isConnected && (
               <button
-                onClick={connectWallet}
+                onClick={() => connectWallet('auto')}
                 className="px-7 py-3.5 rounded-2xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold text-sm border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-soft transition-all"
               >
                 Connect Wallet

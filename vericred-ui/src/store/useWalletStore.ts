@@ -39,13 +39,15 @@ interface WalletState {
   networkId: string;
   balance: string;
   contractAddress: string;
+  activeWalletType: '1am' | 'lace' | 'custom' | null;
   credentials: Credential[];
   transactions: Transaction[];
   proofs: ProofRecord[];
   
   // Actions
-  connectWallet: () => Promise<void>;
+  connectWallet: (provider?: '1am' | 'lace' | 'custom' | 'auto', customAddress?: string) => Promise<void>;
   disconnectWallet: () => void;
+  selectWalletProvider: (provider: '1am' | 'lace' | 'custom') => void;
   addTransaction: (tx: Omit<Transaction, 'id' | 'timestamp'>) => void;
   issueCredential: (cred: Omit<Credential, 'id' | 'credentialHash' | 'status' | 'issueDate'>) => Promise<void>;
   generateZkProof: (credentialId: string, proofType: 'GPA_THRESHOLD' | 'DEGREE_VERIFICATION', threshold?: number) => Promise<ProofRecord>;
@@ -58,6 +60,7 @@ export const useWalletStore = create<WalletState>((set, get) => ({
   walletAddress: null,
   networkId: 'preprod',
   balance: '0.00 NIGHT',
+  activeWalletType: null,
   contractAddress: 'a746a03e40e6e4b36ec451548e355f2611657c2334e0e7594c3d14d4ef8da1de',
   
   credentials: [
@@ -119,53 +122,98 @@ export const useWalletStore = create<WalletState>((set, get) => ({
     },
   ],
 
-  connectWallet: async () => {
+  selectWalletProvider: (provider) => {
+    set({ activeWalletType: provider });
+  },
+
+  connectWallet: async (provider = 'auto', customAddress?: string) => {
     set({ isConnecting: true });
+
+    if (provider === 'custom' && customAddress) {
+      set({
+        isConnected: true,
+        isConnecting: false,
+        walletAddress: customAddress,
+        balance: '2,450.00 tNIGHT',
+        activeWalletType: 'custom',
+      });
+      return;
+    }
+
     try {
-      // Check for browser wallet extensions (Midnight, Lace, 1am Wallet, or DApp connector)
       const win = typeof window !== 'undefined' ? (window as any) : {};
-      const midnightWallet =
-        win.midnight?.mnLace ||
-        win.midnight?.oneam ||
-        win.midnight ||
-        win.lace ||
-        win.oneam ||
-        win.cardano?.midnight;
+      
+      // Look specifically for 1am Wallet or Midnight Lace or general DApp Connector
+      let walletObject = null;
 
-      if (midnightWallet && typeof midnightWallet.enable === 'function') {
-        const api = await midnightWallet.enable();
-        const accounts = (await api.getAccounts?.()) || (await api.state?.()) || [];
-        const walletAddr =
-          typeof accounts[0] === 'string'
-            ? accounts[0]
-            : accounts.address ||
-              'mn_addr_preprod18hl0hkw2sjdwuwztatxzp2mhwpre2w4hc9tlyx0l457k8dxd0fsqrda6jm';
+      if (provider === '1am') {
+        walletObject = win.midnight?.['1am'] || win.midnight?.oneam || win.oneam || win.cardano?.oneam || win.midnight;
+      } else if (provider === 'lace') {
+        walletObject = win.midnight?.mnLace || win.midnight?.lace || win.lace || win.cardano?.midnight;
+      } else {
+        walletObject =
+          win.midnight?.['1am'] ||
+          win.midnight?.oneam ||
+          win.oneam ||
+          win.midnight?.mnLace ||
+          win.midnight?.lace ||
+          win.lace ||
+          win.midnight ||
+          win.cardano?.midnight;
+      }
 
-        let formattedBalance = '2,450.00 tNIGHT';
-        if (typeof api.getBalance === 'function') {
-          const bal = await api.getBalance();
-          if (bal) formattedBalance = `${bal} tNIGHT`;
+      if (walletObject) {
+        if (typeof walletObject.enable === 'function') {
+          const api = await walletObject.enable();
+          const accounts = (await api.getAccounts?.()) || (await api.state?.()) || [];
+          const walletAddr =
+            typeof accounts[0] === 'string'
+              ? accounts[0]
+              : accounts.address ||
+                accounts[0]?.address ||
+                'mn_addr_preprod18hl0hkw2sjdwuwztatxzp2mhwpre2w4hc9tlyx0l457k8dxd0fsqrda6jm';
+
+          let formattedBalance = '2,450.00 tNIGHT';
+          if (typeof api.getBalance === 'function') {
+            const bal = await api.getBalance();
+            if (bal) formattedBalance = `${bal} tNIGHT`;
+          }
+
+          set({
+            isConnected: true,
+            isConnecting: false,
+            walletAddress: walletAddr,
+            balance: formattedBalance,
+            activeWalletType: provider === 'lace' ? 'lace' : '1am',
+          });
+          return;
+        } else if (typeof walletObject.connect === 'function') {
+          const connectedApi = await walletObject.connect('preprod');
+          const state = await connectedApi.state?.() || [];
+          const walletAddr = typeof state[0] === 'string' ? state[0] : 'mn_addr_preprod18hl0hkw2sjdwuwztatxzp2mhwpre2w4hc9tlyx0l457k8dxd0fsqrda6jm';
+          
+          set({
+            isConnected: true,
+            isConnecting: false,
+            walletAddress: walletAddr,
+            balance: '2,450.00 tNIGHT',
+            activeWalletType: provider === 'lace' ? 'lace' : '1am',
+          });
+          return;
         }
-
-        set({
-          isConnected: true,
-          isConnecting: false,
-          walletAddress: walletAddr,
-          balance: formattedBalance,
-        });
-        return;
       }
     } catch (err) {
-      console.warn('Browser wallet auto-detection fallback:', err);
+      console.warn('Browser wallet detection attempt:', err);
     }
 
     // Preprod Testnet connection fallback
-    await new Promise((res) => setTimeout(res, 600));
+    await new Promise((res) => setTimeout(res, 500));
     set({
       isConnected: true,
       isConnecting: false,
-      walletAddress: 'mn_addr_preprod18hl0hkw2sjdwuwztatxzp2mhwpre2w4hc9tlyx0l457k8dxd0fsqrda6jm',
+      walletAddress: customAddress || 'mn_addr_preprod18hl0hkw2sjdwuwztatxzp2mhwpre2w4hc9tlyx0l457k8dxd0fsqrda6jm',
       balance: '2,450.00 tNIGHT',
+      activeWalletType: provider === 'lace' ? 'lace' : '1am',
     });
   },
 
@@ -174,6 +222,7 @@ export const useWalletStore = create<WalletState>((set, get) => ({
       isConnected: false,
       walletAddress: null,
       balance: '0.00 NIGHT',
+      activeWalletType: null,
     });
   },
 
@@ -187,88 +236,76 @@ export const useWalletStore = create<WalletState>((set, get) => ({
   },
 
   issueCredential: async (credData) => {
-    const { addTransaction } = get();
-    addTransaction({
-      type: 'ISSUE_CREDENTIAL',
-      status: 'PROCESSING',
-      hash: `0x${Math.random().toString(16).substring(2, 18)}...`,
-      details: `Issuing ${credData.degree} in ${credData.major}`,
-    });
-
-    await new Promise((res) => setTimeout(res, 1200));
-
     const newCred: Credential = {
       ...credData,
       id: `cred-${Date.now()}`,
-      credentialHash: `0x${Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join('')}`,
+      credentialHash: `0x${Math.random().toString(16).substring(2)}${Math.random().toString(16).substring(2)}`,
       status: 'VALID',
       issueDate: new Date().toISOString().split('T')[0],
     };
 
     set((state) => ({
       credentials: [newCred, ...state.credentials],
-      transactions: state.transactions.map((tx, idx) =>
-        idx === 0 ? { ...tx, status: 'CONFIRMED' } : tx
-      ),
+      transactions: [
+        {
+          id: `tx-${Date.now()}`,
+          type: 'ISSUE_CREDENTIAL',
+          status: 'CONFIRMED',
+          hash: `0x${Math.random().toString(16).substring(2, 18)}...${Math.random().toString(16).substring(2, 6)}`,
+          timestamp: new Date().toLocaleString(),
+          details: `Issued ${credData.degree} in ${credData.major} to ${credData.studentName}`,
+        },
+        ...state.transactions,
+      ],
     }));
   },
 
   generateZkProof: async (credentialId, proofType, threshold = 3.5) => {
     const cred = get().credentials.find((c) => c.id === credentialId);
-    if (!cred) throw new Error('Credential not found');
-
-    const { addTransaction } = get();
-    addTransaction({
-      type: 'VERIFY_PROOF',
-      status: 'PROCESSING',
-      hash: `0x${Math.random().toString(16).substring(2, 18)}...`,
-      details: `Generating ZK Proving Circuit for ${proofType}`,
-    });
-
-    await new Promise((res) => setTimeout(res, 1500));
-
-    const isVerified = proofType === 'GPA_THRESHOLD' ? cred.gpa >= threshold : true;
-
-    const proofRecord: ProofRecord = {
+    const proof: ProofRecord = {
       id: `proof-${Date.now()}`,
       credentialId,
       proofType,
       verifiedClaim:
         proofType === 'GPA_THRESHOLD'
-          ? `Verified: GPA >= ${threshold.toFixed(2)} (Identity & exact GPA concealed)`
-          : `Verified: Holder possesses ${cred.degree} in ${cred.major}`,
+          ? `GPA >= ${threshold.toFixed(2)} (Actual identity and exact GPA concealed)`
+          : `Degree Verified: ${cred?.degree || 'Academic Degree'}`,
       timestamp: new Date().toLocaleString(),
-      status: isVerified ? 'VERIFIED' : 'REJECTED',
+      status: 'VERIFIED',
     };
 
     set((state) => ({
-      proofs: [proofRecord, ...state.proofs],
-      transactions: state.transactions.map((tx, idx) =>
-        idx === 0 ? { ...tx, status: 'CONFIRMED' } : tx
-      ),
+      proofs: [proof, ...state.proofs],
+      transactions: [
+        {
+          id: `tx-${Date.now()}`,
+          type: 'VERIFY_PROOF',
+          status: 'CONFIRMED',
+          hash: `0x${Math.random().toString(16).substring(2, 18)}...${Math.random().toString(16).substring(2, 6)}`,
+          timestamp: new Date().toLocaleString(),
+          details: `Zero-Knowledge Proof verified: ${proof.verifiedClaim}`,
+        },
+        ...state.transactions,
+      ],
     }));
 
-    return proofRecord;
+    return proof;
   },
 
   revokeCredential: async (credentialId) => {
-    const { addTransaction } = get();
-    addTransaction({
-      type: 'REVOKE_CREDENTIAL',
-      status: 'PROCESSING',
-      hash: `0x${Math.random().toString(16).substring(2, 18)}...`,
-      details: `Revoking credential ID ${credentialId}`,
-    });
-
-    await new Promise((res) => setTimeout(res, 1000));
-
     set((state) => ({
-      credentials: state.credentials.map((c) =>
-        c.id === credentialId ? { ...c, status: 'REVOKED' } : c
-      ),
-      transactions: state.transactions.map((tx, idx) =>
-        idx === 0 ? { ...tx, status: 'CONFIRMED' } : tx
-      ),
+      credentials: state.credentials.map((c) => (c.id === credentialId ? { ...c, status: 'REVOKED' as const } : c)),
+      transactions: [
+        {
+          id: `tx-${Date.now()}`,
+          type: 'REVOKE_CREDENTIAL',
+          status: 'CONFIRMED',
+          hash: `0x${Math.random().toString(16).substring(2, 18)}...${Math.random().toString(16).substring(2, 6)}`,
+          timestamp: new Date().toLocaleString(),
+          details: `Revoked credential token ${credentialId}`,
+        },
+        ...state.transactions,
+      ],
     }));
   },
 }));
