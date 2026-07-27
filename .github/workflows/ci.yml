@@ -1,0 +1,52 @@
+name: VeriCred Midnight CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: |
+          cd demo
+          npm install
+          cd contract && npm install && cd ..
+          cd api && npm install && cd ..
+          cd bboard-cli && npm install && cd ..
+          cd bboard-ui && npm install && cd ..
+
+      - name: Compile Compact Contracts
+        run: |
+          cd demo/contract && npm run compact
+
+      - name: Typecheck TypeScript Codebases
+        run: |
+          cd demo/contract && npm run typecheck
+          cd demo/api && npm run typecheck
+          cd demo/bboard-cli && npm run typecheck
+          cd demo/bboard-ui && npm run typecheck
+
+      - name: Execute Smart Contract Unit Tests
+        run: |
+          cd demo && npm test
+
+      - name: Build Production Packages
+        run: |
+          cd demo/contract && npm run build
+          cd demo/api && npm run build
+          cd demo/bboard-cli && npm run build
+          cd demo/bboard-ui && npm run build
