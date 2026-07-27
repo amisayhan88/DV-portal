@@ -1,7 +1,7 @@
 {
-  "name": "@midnight-ntwrk/bboard-ui",
+  "name": "@vericred/ui",
   "version": "0.1.0",
-  "author": "IOG",
+  "author": "amisayhan88 <amisayhan88@gmail.com>",
   "license": "MIT",
   "private": true,
   "type": "module",

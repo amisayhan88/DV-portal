@@ -24,8 +24,8 @@ jobs:
           npm install --no-audit
           npm --prefix contract install --no-audit
           npm --prefix api install --no-audit
-          npm --prefix bboard-cli install --no-audit
-          npm --prefix bboard-ui install --no-audit
+          npm --prefix vericred-cli install --no-audit
+          npm --prefix vericred-ui install --no-audit
 
       - name: Compile Compact Contracts & Build Core Libraries
         run: |
@@ -37,8 +37,8 @@ jobs:
         run: |
           npm --prefix contract run typecheck
           npm --prefix api run typecheck
-          npm --prefix bboard-cli run typecheck
-          npm --prefix bboard-ui run typecheck
+          npm --prefix vericred-cli run typecheck
+          npm --prefix vericred-ui run typecheck
 
       - name: Execute Smart Contract Unit Tests
         run: |
@@ -46,5 +46,5 @@ jobs:
 
       - name: Build Application Packages
         run: |
-          npm --prefix bboard-cli run build
-          npm --prefix bboard-ui run build
+          npm --prefix vericred-cli run build
+          npm --prefix vericred-ui run build
