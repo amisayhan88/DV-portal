@@ -14,6 +14,10 @@
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "esModuleInterop": false,
+    "paths": {
+      "@midnight-ntwrk/bboard-contract": ["../contract/dist/index.d.ts", "../contract/src/index.ts"],
+      "@midnight-ntwrk/bboard-api": ["../api/dist/index.d.ts", "../api/src/index.ts"]
+    },
     "noEmit": true,
     "jsx": "react-jsx"
   },
