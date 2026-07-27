@@ -1,9 +1,9 @@
 # VeriCred – Confidential Academic Credentials on Midnight Network (Level 1)
 
-[![CI/CD Pipeline](https://github.com/LIGHT-25/Degree_Verification-_Portal/actions/workflows/ci.yml/badge.svg)](https://github.com/LIGHT-25/Degree_Verification-_Portal/actions/workflows/ci.yml)
+[![CI/CD Pipeline](https://github.com/amisayhan88/DV-portal/actions/workflows/ci.yml/badge.svg)](https://github.com/amisayhan88/DV-portal/actions/workflows/ci.yml)
 [![Midnight Network](https://img.shields.io/badge/Network-Midnight_Preprod-6b21a8.svg)](https://preprod.midnightexplorer.com)
 [![Compact Language](https://img.shields.io/badge/Language-Compact_0.23-blue.svg)](https://midnight.network)
-[![Tests Passing](https://img.shields.io/badge/Tests-14%2F14_Passing-emerald.svg)](https://github.com/LIGHT-25/Degree_Verification-_Portal)
+[![Tests Passing](https://img.shields.io/badge/Tests-14%2F14_Passing-emerald.svg)](https://github.com/amisayhan88/DV-portal)
 
 ![VeriCred Banner](https://raw.githubusercontent.com/midnightntwrk/example-bboard/main/docs/assets/banner.png)
 
@@ -24,7 +24,7 @@ Level 1 delivered a working Compact contract, local unit tests, and a Preprod de
 | **CI/CD Pipeline Running** | ✅ **PASSED** | `.github/workflows/ci.yml` GitHub Actions workflow & status badge |
 | **Approved Idea from Idea List** | ✅ **PASSED** | Degree Verification Platform (VeriCred) |
 | **Minimum 10 Meaningful Commits** | ✅ **PASSED** | 10 structured git commits documented below |
-| **Public GitHub Repository & README** | ✅ **PASSED** | https://github.com/LIGHT-25/Degree_Verification-_Portal.git |
+| **Public GitHub Repository & README** | ✅ **PASSED** | https://github.com/amisayhan88/DV-portal.git |
 | **Live Demo / Local Launch Link** | ✅ **PASSED** | Frontend dev server (`npm run dev`) & Docker Compose |
 | **Demo Video (1 Minute)** | ✅ **PASSED** | 🎥 [Watch VeriCred 1-Minute DApp Demo Walkthrough](https://youtube.com/placeholder) |
 | **README Privacy Model Section** | ✅ **PASSED** | Detailed "What an Observer CAN and CANNOT Learn" breakdown below |
