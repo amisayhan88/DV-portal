@@ -70,9 +70,9 @@ witness degreeIdHash(): Bytes<32>;
 | **Proof Server Container** | `midnightntwrk/proof-server:8.1.0` |
 
 ### On-Chain Explorer Verification
-- 🌐 [Midnight Preprod Explorer](https://preprod.midnightexplorer.com/contract/a746a03e40e6e4b36ec451548e355f2611657c2334e0e7594c3d14d4ef8da1de)
-- 🌐 [Subscan Preprod Explorer](https://midnight-preprod.subscan.io/account/mn_addr_preprod18hl0hkw2sjdwuwztatxzp2mhwpre2w4hc9tlyx0l457k8dxd0fsqrda6jm)
-- 🌐 [1am Explorer Preprod](https://explorer.1am.xyz/contract/a746a03e40e6e4b36ec451548e355f2611657c2334e0e7594c3d14d4ef8da1de)
+- 🌐 [preprod.midnightexplorer.com](https://preprod.midnightexplorer.com)
+- 🌐 [midnight-preprod.subscan.io](https://midnight-preprod.subscan.io)
+- 🌐 [explorer.1am.xyz (preprod)](https://explorer.1am.xyz)
 
 ---
 
