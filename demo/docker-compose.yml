@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  proof-server:
+    image: midnightntwrk/proof-server:8.1.0
+    container_name: vericred-proof-server
+    ports:
+      - "6300:6300"
+    environment:
+      - PORT=6300
+    restart: unless-stopped
+
+  vericred-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vericred-app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_CONTRACT_ADDRESS=<YOUR_DEPLOYED_CONTRACT_ADDRESS>
+      - NEXT_PUBLIC_PROOF_SERVER_URL=http://proof-server:6300
+      - NEXT_PUBLIC_NETWORK_ID=preprod
+    depends_on:
+      - proof-server
+    restart: unless-stopped
