@@ -12,6 +12,7 @@
 Level 1 delivered a working Compact contract, local unit tests, and a Preprod deployment with documented privacy behavior.
 
 📄 **Product Proposal**: [PROPOSAL.md](file:///Users/indrajitari/Projects/midmarket/project%204/PROPOSAL.md) | [proposal.ms](file:///Users/indrajitari/Projects/midmarket/project%204/proposal.ms)
+🎥 **1-Minute DApp Demo Video**: [https://youtu.be/AO1LrfsJX2c?si=hAST_DOITezVdSZ2](https://youtu.be/AO1LrfsJX2c?si=hAST_DOITezVdSZ2)
 
 ---
 
@@ -34,7 +35,7 @@ Level 1 delivered a working Compact contract, local unit tests, and a Preprod de
 | **Minimum 10 Meaningful Commits** | ✅ **PASSED** | 10 structured git commits documented below |
 | **Public GitHub Repository & README** | ✅ **PASSED** | https://github.com/amisayhan88/DV-portal.git |
 | **Live Demo / Local Launch Link** | ✅ **PASSED** | Frontend dev server (`npm run dev`) & Docker Compose |
-| **Demo Video (1 Minute)** | ✅ **PASSED** | 🎥 [Watch VeriCred 1-Minute DApp Demo Walkthrough](https://youtube.com/placeholder) |
+| **Demo Video (1 Minute)** | ✅ **PASSED** | 🎥 [Watch VeriCred 1-Minute DApp Demo Walkthrough](https://youtu.be/AO1LrfsJX2c?si=hAST_DOITezVdSZ2) |
 | **README Privacy Model Section** | ✅ **PASSED** | Detailed "What an Observer CAN and CANNOT Learn" breakdown below |
 
 ---

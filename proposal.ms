@@ -4,6 +4,8 @@
 
 **VeriCred** is a privacy-first, zero-knowledge **Confidential Academic Credentials Platform** built on the **Midnight Network**. It enables accredited educational institutions (universities, colleges, and certification bodies) to securely issue cryptographically verifiable academic credentials on-chain while empowering students to selectively prove their qualifications—such as achieving a *"GPA ≥ 3.50"* or holding a *"Degree in Computer Science"*—to employers and verifiers **without revealing their raw transcripts, exact grades, or sensitive personally identifiable information (PII)**.
 
+🎥 **1-Minute DApp Demo Video**: [https://youtu.be/AO1LrfsJX2c?si=hAST_DOITezVdSZ2](https://youtu.be/AO1LrfsJX2c?si=hAST_DOITezVdSZ2)
+
 ---
 
 ## 💥 Problem Statement
