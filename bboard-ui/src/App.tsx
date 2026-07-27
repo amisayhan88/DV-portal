@@ -7,7 +7,7 @@ import { StatsWidget } from './components/StatsWidget';
 import { CredentialCard } from './components/CredentialCard';
 import { ZkProofModal } from './components/ZkProofModal';
 import { CornerDecorations } from './components/CornerDecorations';
-import { useWalletStore, Credential } from './store/useWalletStore';
+import { useWalletStore, Credential, Transaction } from './store/useWalletStore';
 import { vericredClient } from './lib/contract-client';
 import {
   ShieldCheck,
@@ -26,7 +26,13 @@ import {
   Wallet,
   FileSearch,
   Clock,
-  ArrowUpRight,
+  ExternalLink,
+  Search,
+  Filter,
+  Key,
+  Server,
+  Database,
+  Cpu,
 } from 'lucide-react';
 
 /* -------------------------------------------------------------------------- */
@@ -106,7 +112,7 @@ const LandingPage: React.FC = () => {
 /* DASHBOARD PAGE                                                             */
 /* -------------------------------------------------------------------------- */
 const DashboardPage: React.FC = () => {
-  const { credentials, isConnected, walletAddress, balance, transactions } = useWalletStore();
+  const { credentials, isConnected, walletAddress, balance } = useWalletStore();
   const [selectedCredential, setSelectedCredential] = useState<Credential | null>(null);
 
   return (
@@ -222,31 +228,31 @@ const IssuePage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="font-bold block mb-1">Student Name</label>
-                  <input type="text" value={studentName} onChange={(e) => setStudentName(e.target.value)} className="w-full p-2.5 border rounded-xl bg-slate-50 dark:bg-slate-800" />
+                  <input type="text" value={studentName} onChange={(e) => setStudentName(e.target.value)} className="w-full p-2.5 border rounded-xl bg-slate-50 dark:bg-slate-800 dark:text-white" />
                 </div>
                 <div>
                   <label className="font-bold block mb-1">Student DID</label>
-                  <input type="text" value={studentDid} onChange={(e) => setStudentDid(e.target.value)} className="w-full p-2.5 border rounded-xl bg-slate-50 dark:bg-slate-800 font-mono text-[11px]" />
+                  <input type="text" value={studentDid} onChange={(e) => setStudentDid(e.target.value)} className="w-full p-2.5 border rounded-xl bg-slate-50 dark:bg-slate-800 font-mono text-[11px] dark:text-white" />
+                </div>
+                <div>
+                  <label className="font-bold block mb-1">Institution</label>
+                  <input type="text" value={institution} onChange={(e) => setInstitution(e.target.value)} className="w-full p-2.5 border rounded-xl bg-slate-50 dark:bg-slate-800 dark:text-white" />
                 </div>
                 <div>
                   <label className="font-bold block mb-1">Degree Title</label>
-                  <input type="text" value={degree} onChange={(e) => setDegree(e.target.value)} className="w-full p-2.5 border rounded-xl bg-slate-50 dark:bg-slate-800" />
+                  <input type="text" value={degree} onChange={(e) => setDegree(e.target.value)} className="w-full p-2.5 border rounded-xl bg-slate-50 dark:bg-slate-800 dark:text-white" />
                 </div>
                 <div>
                   <label className="font-bold block mb-1">Field of Study / Major</label>
-                  <input type="text" value={major} onChange={(e) => setMajor(e.target.value)} className="w-full p-2.5 border rounded-xl bg-slate-50 dark:bg-slate-800" />
+                  <input type="text" value={major} onChange={(e) => setMajor(e.target.value)} className="w-full p-2.5 border rounded-xl bg-slate-50 dark:bg-slate-800 dark:text-white" />
                 </div>
                 <div>
                   <label className="font-bold block mb-1">GPA (Private Witness): {gpa.toFixed(2)}</label>
-                  <input type="number" step="0.01" value={gpa} onChange={(e) => setGpa(parseFloat(e.target.value))} className="w-full p-2.5 border rounded-xl bg-slate-50 dark:bg-slate-800" />
-                </div>
-                <div>
-                  <label className="font-bold block mb-1">Target Contract</label>
-                  <input type="text" disabled value="<YOUR_DEPLOYED_CONTRACT_ADDRESS>" className="w-full p-2.5 border rounded-xl bg-slate-100 font-mono text-[11px]" />
+                  <input type="number" step="0.01" value={gpa} onChange={(e) => setGpa(parseFloat(e.target.value))} className="w-full p-2.5 border rounded-xl bg-slate-50 dark:bg-slate-800 dark:text-white" />
                 </div>
               </div>
-              <button type="submit" disabled={isSubmitting} className="w-full py-3.5 rounded-xl bg-amber-400 text-slate-950 font-bold hover:opacity-95">
-                {isSubmitting ? 'Submitting Circuit...' : 'Sign & Issue Credential'}
+              <button type="submit" disabled={isSubmitting} className="w-full py-3.5 rounded-xl bg-amber-400 text-slate-950 font-bold hover:opacity-95 shadow-sm transition-all">
+                {isSubmitting ? 'Submitting Compact Circuit...' : 'Sign & Issue Credential'}
               </button>
             </form>
           )}
@@ -277,27 +283,353 @@ const VerifyPage: React.FC = () => {
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <ShieldCheck className="w-6 h-6 text-emerald-500" /> Zero-Knowledge Verifier
         </h1>
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border shadow-soft space-y-4">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-soft space-y-4">
           <form onSubmit={handleVerify} className="space-y-4 text-xs">
             <div>
-              <label className="font-bold block mb-1">Credential Hash</label>
-              <input type="text" value={credHash} onChange={(e) => setCredHash(e.target.value)} className="w-full p-2.5 border rounded-xl bg-slate-50 font-mono text-[11px]" />
+              <label className="font-bold block mb-1 text-slate-700 dark:text-slate-300">Credential Hash</label>
+              <input type="text" value={credHash} onChange={(e) => setCredHash(e.target.value)} className="w-full p-2.5 border rounded-xl bg-slate-50 dark:bg-slate-800 font-mono text-[11px] dark:text-white" />
             </div>
             <div>
-              <label className="font-bold block mb-1">Minimum Required GPA: {minGpa.toFixed(2)}</label>
-              <input type="number" step="0.1" value={minGpa} onChange={(e) => setMinGpa(parseFloat(e.target.value))} className="w-full p-2.5 border rounded-xl bg-slate-50" />
+              <label className="font-bold block mb-1 text-slate-700 dark:text-slate-300">Minimum Required GPA: {minGpa.toFixed(2)}</label>
+              <input type="number" step="0.1" value={minGpa} onChange={(e) => setMinGpa(parseFloat(e.target.value))} className="w-full p-2.5 border rounded-xl bg-slate-50 dark:bg-slate-800 dark:text-white" />
             </div>
-            <button type="submit" className="w-full py-3.5 bg-slate-900 text-white rounded-xl font-bold">
+            <button type="submit" className="w-full py-3.5 bg-slate-900 text-white dark:bg-white dark:text-slate-900 rounded-xl font-bold">
               Execute ZK Verification Check
             </button>
           </form>
 
           {result && (
-            <div className="p-4 bg-emerald-50 text-emerald-900 rounded-2xl border border-emerald-200 text-xs">
+            <div className="p-4 bg-emerald-50 text-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-300 rounded-2xl border border-emerald-200 dark:border-emerald-800 text-xs space-y-1">
               <h3 className="font-bold text-sm">Statement Cryptographically Verified</h3>
-              <p className="text-[11px] mt-1">Proof: {result.proofHash}</p>
+              <p className="text-[11px] font-mono">Proof: {result.proofHash}</p>
             </div>
           )}
+        </div>
+      </main>
+    </div>
+  );
+};
+
+/* -------------------------------------------------------------------------- */
+/* TRANSACTIONS PAGE                                                          */
+/* -------------------------------------------------------------------------- */
+const TransactionsPage: React.FC = () => {
+  const { transactions } = useWalletStore();
+  const [search, setSearch] = useState('');
+
+  const filteredTx = transactions.filter(
+    (tx) => tx.hash.toLowerCase().includes(search.toLowerCase()) || tx.details.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div className="flex min-h-[calc(100vh-65px)]">
+      <Sidebar />
+      <main className="flex-1 p-6 space-y-6 overflow-y-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+              <History className="w-6 h-6 text-amber-500" />
+              <span>On-Chain Transactions</span>
+            </h1>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Midnight Preprod ledger state transitions & zero-knowledge proof submissions.
+            </p>
+          </div>
+
+          <div className="relative">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+            <input
+              type="text"
+              placeholder="Search tx hash or details..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9 pr-4 py-2 text-xs border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 dark:text-white w-64 shadow-sm"
+            />
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-soft overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  <th className="py-3 px-4">Tx Hash</th>
+                  <th className="py-3 px-4">Type</th>
+                  <th className="py-3 px-4">Status</th>
+                  <th className="py-3 px-4">Details</th>
+                  <th className="py-3 px-4">Timestamp</th>
+                  <th className="py-3 px-4 text-right">Explorer</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
+                {filteredTx.map((tx) => (
+                  <tr key={tx.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                    <td className="py-3.5 px-4 font-mono text-[11px] text-amber-600 dark:text-amber-400 font-semibold">
+                      {tx.hash}
+                    </td>
+                    <td className="py-3.5 px-4 font-semibold text-slate-800 dark:text-slate-200">
+                      <span className="px-2 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-[10px]">
+                        {tx.type}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-300/60 dark:border-emerald-800">
+                        <CheckCircle2 className="w-3 h-3" />
+                        {tx.status}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium">
+                      {tx.details}
+                    </td>
+                    <td className="py-3.5 px-4 text-slate-400 text-[11px]">
+                      {tx.timestamp}
+                    </td>
+                    <td className="py-3.5 px-4 text-right">
+                      <a
+                        href="https://preprod.midnightexplorer.com"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-amber-100 dark:hover:bg-amber-900/40 text-slate-700 dark:text-slate-300 text-[11px] font-semibold transition-colors"
+                      >
+                        <span>View</span>
+                        <ExternalLink className="w-3 h-3 text-slate-400" />
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+/* -------------------------------------------------------------------------- */
+/* ACTIVITY FEED PAGE                                                         */
+/* -------------------------------------------------------------------------- */
+const ActivityFeedPage: React.FC = () => {
+  const activities = [
+    { id: 'act-1', event: 'Zero-Knowledge Proof Evaluated', detail: 'GPA >= 3.50 claim evaluated locally via Midnight Proof Server', time: '10 mins ago', type: 'ZK_PROOF' },
+    { id: 'act-2', event: 'Credential Issued & Sealed', detail: 'Bachelor of Science issued to Alex Rivera (Witness Encrypted)', time: '1 hour ago', type: 'ISSUE' },
+    { id: 'act-3', event: 'Preprod Contract Verified', detail: 'Contract Address a746a03e40e6e4b36ec451548e355f2611657c2334e0e7594c3d14d4ef8da1de synced', time: '3 hours ago', type: 'CONTRACT' },
+    { id: 'act-4', event: 'Local Proof Server Initialized', detail: 'Docker proof server listening on port 6300 OK', time: '5 hours ago', type: 'SYSTEM' },
+  ];
+
+  return (
+    <div className="flex min-h-[calc(100vh-65px)]">
+      <Sidebar />
+      <main className="flex-1 p-6 space-y-6 overflow-y-auto">
+        <div>
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+            <Activity className="w-6 h-6 text-amber-500" />
+            <span>Activity Feed & Event Logs</span>
+          </h1>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Real-time audit trail of protocol events and circuit evaluations.
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-4">
+          {activities.map((act) => (
+            <div key={act.id} className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60">
+              <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                <Activity className="w-5 h-5" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-xs text-slate-900 dark:text-white">{act.event}</h3>
+                  <span className="text-[10px] text-slate-400 flex items-center gap-1">
+                    <Clock className="w-3 h-3" /> {act.time}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">{act.detail}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+    </div>
+  );
+};
+
+/* -------------------------------------------------------------------------- */
+/* ANALYTICS PAGE                                                             */
+/* -------------------------------------------------------------------------- */
+const AnalyticsPage: React.FC = () => {
+  return (
+    <div className="flex min-h-[calc(100vh-65px)]">
+      <Sidebar />
+      <main className="flex-1 p-6 space-y-6 overflow-y-auto">
+        <div>
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+            <BarChart3 className="w-6 h-6 text-amber-500" />
+            <span>Zero-Knowledge Protocol Analytics</span>
+          </h1>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Privacy performance metrics & smart contract circuit benchmarks.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-soft text-center">
+            <Cpu className="w-8 h-8 text-amber-500 mx-auto mb-2" />
+            <span className="text-2xl font-black text-slate-900 dark:text-white">0.24s</span>
+            <p className="text-xs text-slate-500 mt-1">Average Local Proving Time</p>
+          </div>
+          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-soft text-center">
+            <ShieldCheck className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
+            <span className="text-2xl font-black text-slate-900 dark:text-white">100%</span>
+            <p className="text-xs text-slate-500 mt-1">Private Witness Concealment</p>
+          </div>
+          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-soft text-center">
+            <Database className="w-8 h-8 text-amber-500 mx-auto mb-2" />
+            <span className="text-2xl font-black text-slate-900 dark:text-white">Preprod #142k</span>
+            <p className="text-xs text-slate-500 mt-1">Synced Ledger Height</p>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+/* -------------------------------------------------------------------------- */
+/* MY VAULT / PROFILE PAGE                                                    */
+/* -------------------------------------------------------------------------- */
+const VaultPage: React.FC = () => {
+  const { credentials, walletAddress } = useWalletStore();
+
+  return (
+    <div className="flex min-h-[calc(100vh-65px)]">
+      <Sidebar />
+      <main className="flex-1 p-6 space-y-6 overflow-y-auto">
+        <div>
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+            <User className="w-6 h-6 text-amber-500" />
+            <span>My Credential Vault & Identity</span>
+          </h1>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Student Decentralized Identity (DID) & encrypted local witness storage.
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-4">
+          <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Key className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+              <div>
+                <h3 className="font-bold text-xs text-slate-900 dark:text-white">Student DID Identity</h3>
+                <p className="text-[11px] font-mono text-slate-600 dark:text-slate-300">did:midnight:0x89f2a71b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f</p>
+              </div>
+            </div>
+            <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">Active</span>
+          </div>
+
+          <div className="space-y-3">
+            <h3 className="font-bold text-xs text-slate-900 dark:text-white">Stored Credential Tokens ({credentials.length})</h3>
+            {credentials.map((cred) => (
+              <div key={cred.id} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-xs">
+                <div>
+                  <h4 className="font-bold text-slate-900 dark:text-white">{cred.degree} - {cred.major}</h4>
+                  <p className="text-[11px] text-slate-500">{cred.institution} • Graduated {cred.graduationYear}</p>
+                </div>
+                <span className="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-900 dark:bg-amber-900/40 dark:text-amber-300 font-semibold text-[10px]">
+                  GPA Witness Sealed
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+/* -------------------------------------------------------------------------- */
+/* SETTINGS PAGE                                                              */
+/* -------------------------------------------------------------------------- */
+const SettingsPage: React.FC = () => {
+  return (
+    <div className="flex min-h-[calc(100vh-65px)]">
+      <Sidebar />
+      <main className="flex-1 p-6 space-y-6 overflow-y-auto">
+        <div>
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+            <Settings className="w-6 h-6 text-amber-500" />
+            <span>Protocol Settings & Parameters</span>
+          </h1>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Configure Midnight network RPC, Proof Server endpoints, and contract bindings.
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-4 text-xs">
+          <div>
+            <label className="font-bold block mb-1 text-slate-700 dark:text-slate-300">Active Network</label>
+            <input type="text" disabled value="Midnight Preprod Testnet" className="w-full p-2.5 border rounded-xl bg-slate-100 dark:bg-slate-800 dark:text-white font-semibold" />
+          </div>
+
+          <div>
+            <label className="font-bold block mb-1 text-slate-700 dark:text-slate-300">Preprod Contract Address</label>
+            <input type="text" disabled value="a746a03e40e6e4b36ec451548e355f2611657c2334e0e7594c3d14d4ef8da1de" className="w-full p-2.5 border rounded-xl bg-slate-100 dark:bg-slate-800 font-mono text-[11px] dark:text-white" />
+          </div>
+
+          <div>
+            <label className="font-bold block mb-1 text-slate-700 dark:text-slate-300">Local Proof Server Endpoint</label>
+            <input type="text" disabled value="http://localhost:6300" className="w-full p-2.5 border rounded-xl bg-slate-100 dark:bg-slate-800 font-mono text-[11px] dark:text-white" />
+          </div>
+
+          <div>
+            <label className="font-bold block mb-1 text-slate-700 dark:text-slate-300">Indexer RPC Service</label>
+            <input type="text" disabled value="https://indexer.preprod.midnight.network" className="w-full p-2.5 border rounded-xl bg-slate-100 dark:bg-slate-800 font-mono text-[11px] dark:text-white" />
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+/* -------------------------------------------------------------------------- */
+/* HELP & FAQ PAGE                                                            */
+/* -------------------------------------------------------------------------- */
+const HelpFaqPage: React.FC = () => {
+  const faqs = [
+    {
+      q: 'What can an on-chain observer see?',
+      a: 'An on-chain observer can only see public contract state transitions (e.g. status changes). Private witnesses, student identities, exact GPAs, and raw transcripts remain 100% concealed inside local ZK circuits.',
+    },
+    {
+      q: 'How does selective disclosure work?',
+      a: 'VeriCred evaluates local witnesses to construct a succinct ZK proof showing e.g. "GPA >= 3.50" without disclosing the actual GPA (e.g. 3.85) or revealing identity.',
+    },
+    {
+      q: 'How do I test on Midnight Preprod?',
+      a: 'Connect your 1am Wallet or Midnight Lace browser extension, request test tokens from the Preprod faucet, and interact with contract address a746a03e40e6e4b36ec451548e355f2611657c2334e0e7594c3d14d4ef8da1de.',
+    },
+  ];
+
+  return (
+    <div className="flex min-h-[calc(100vh-65px)]">
+      <Sidebar />
+      <main className="flex-1 p-6 space-y-6 overflow-y-auto">
+        <div>
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+            <HelpCircle className="w-6 h-6 text-amber-500" />
+            <span>Help Center & FAQ</span>
+          </h1>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Documentation on Midnight Network privacy model and Compact smart contracts.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          {faqs.map((faq, idx) => (
+            <div key={idx} className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-soft space-y-2">
+              <h3 className="font-bold text-sm text-slate-900 dark:text-white">{faq.q}</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{faq.a}</p>
+            </div>
+          ))}
         </div>
       </main>
     </div>
@@ -319,12 +651,12 @@ export const App: React.FC = () => {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/issue" element={<IssuePage />} />
             <Route path="/verify" element={<VerifyPage />} />
-            <Route path="/activity" element={<DashboardPage />} />
-            <Route path="/transactions" element={<DashboardPage />} />
-            <Route path="/analytics" element={<DashboardPage />} />
-            <Route path="/profile" element={<DashboardPage />} />
-            <Route path="/settings" element={<DashboardPage />} />
-            <Route path="/help" element={<DashboardPage />} />
+            <Route path="/activity" element={<ActivityFeedPage />} />
+            <Route path="/transactions" element={<TransactionsPage />} />
+            <Route path="/analytics" element={<AnalyticsPage />} />
+            <Route path="/profile" element={<VaultPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/help" element={<HelpFaqPage />} />
           </Routes>
         </main>
       </div>
