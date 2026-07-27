@@ -32,7 +32,7 @@ Level 1 delivered a working Compact contract, local unit tests, and a Preprod de
 | **Minimum 3 Tests Passing** | ✅ **PASSED (14/14)** | `src/test/cac.test.ts` (5 tests) & `src/test/bboard.test.ts` (9 tests) |
 | **CI/CD Pipeline Running** | ✅ **PASSED** | `.github/workflows/ci.yml` GitHub Actions workflow & status badge |
 | **Approved Idea from Idea List** | ✅ **PASSED** | Degree Verification Platform (VeriCred) |
-| **Minimum 10 Meaningful Commits** | ✅ **PASSED** | 10 structured git commits documented below |
+| **Minimum 10 Meaningful Commits** | ✅ **PASSED** | 10+ structured git commits documented below |
 | **Public GitHub Repository & README** | ✅ **PASSED** | https://github.com/amisayhan88/DV-portal.git |
 | **Live Demo / Local Launch Link** | ✅ **PASSED** | Frontend dev server (`npm run dev`) & Docker Compose |
 | **Demo Video (1 Minute)** | ✅ **PASSED** | 🎥 [Watch VeriCred 1-Minute DApp Demo Walkthrough](https://youtu.be/AO1LrfsJX2c?si=hAST_DOITezVdSZ2) |
@@ -57,59 +57,28 @@ witness degreeIdHash(): Bytes<32>;
 ### 👁️ What an On-Chain Observer CAN Learn (PUBLIC Data)
 - **Total Credentials Counter**: The cumulative number of credentials issued (`totalCredentialsIssued`).
 - **Institution Public Key Hash**: The public key hash (`institutionOwner`) of the authorized issuing authority.
-- **Credential Validity Status**: Whether a specific credential hash is marked as `VALID` or `REVOKED` in `credentialStatus`.
-- **Disclosed State Transitions**: The disclosed counter increment value when state changes are posted to the ledger.
-- **Proof Validity**: Mathematical certainty (via zk-SNARK execution) that the state transition satisfies all contract rules.
+- **Credential Status State**: Whether a specific credential hash (`Bytes<32>`) is `VALID` (1) or `REVOKED` (2).
+- **Zero-Knowledge Validity Proofs**: Mathematical ZK-SNARK proof bytes confirming state transition conditions were met without revealing witness inputs.
 
 ### 🙈 What an On-Chain Observer CANNOT Learn (PRIVATE Witness Data)
-- ❌ **Student Identity & Name**: Student names, student ID numbers, and social security numbers are **never** published.
-- ❌ **Raw GPA Score**: The exact GPA (e.g. `3.85`) remains 100% private in local state (`studentGpaScaled`); only the threshold claim (e.g. `GPA >= 3.50`) is verified.
-- ❌ **Degree Program & Transcripts**: Individual course grades, retakes, and transcript contents are concealed behind `degreeIdHash`.
-- ❌ **Student Secret Key**: The 32-byte secret key (`localSecretKey`) stays strictly on the student's local device.
-
-### 🛡️ Privacy Claim Summary
-An on-chain observer can verify that a student holds a valid credential from an authorized university and satisfies specific threshold criteria (e.g., GPA ≥ 3.50). However, the raw private witness inputs supplied to the proving circuit are **never** displayed on the public ledger or UI result surface.
+- **Student Identity & Personal Information**: Student names, DIDs, birth dates, or social security numbers are **never published on-chain**.
+- **Exact GPA & Grades**: Student GPAs (`studentGpaScaled`) remain strictly inside local private witness state. A verifier receives a ZK proof for *"GPA ≥ 3.50"* without learning whether the actual GPA was 3.55, 3.85, or 4.00.
+- **Raw Transcripts & Degree Titles**: Course retakes, failed units, or exact degree IDs (`degreeIdHash`) are concealed inside local private witness evaluation.
+- **Institution Secret Signing Key**: The issuer's private key (`localSecretKey`) is evaluated exclusively off-chain during ZK proof construction.
 
 ---
 
-## 📍 Contract Address & Preprod Deployment
+## 📜 Contract Address & Network Deployment
 
-| Network | Address / Explorer Link | Status |
+| Network | Contract Address / Status | Verification Explorer Link |
 | --- | --- | --- |
-| **Undeployed** | `3523aa3006329b8e763ba2cc655fb9a0e25833d2f11072c1d50146a830074d0b` | Development |
-| **Preview** | `Pending deployment` | Pending |
-| **Preprod** | `a746a03e40e6e4b36ec451548e355f2611657c2334e0e7594c3d14d4ef8da1de` | **LIVE (Preprod)** |
+| **Preprod** | `a746a03e40e6e4b36ec451548e355f2611657c2334e0e7594c3d14d4ef8da1de` | [🌐 Midnight Explorer](https://preprod.midnightexplorer.com) \| [🌐 Subscan](https://midnight-preprod.subscan.io) \| [🌐 1am Explorer](https://explorer.1am.xyz) |
+| **Undeployed** | `3523aa3006329b8e763ba2cc655fb9a0e25833d2f11072c1d50146a830074d0b` | Development Ledger ID |
 
-### 🌐 Verify Preprod On-Chain
+### Deployer Wallet Address (Preprod)
+`mn_addr_preprod18hl0hkw2sjdwuwztatxzp2mhwpre2w4hc9tlyx0l457k8dxd0fsqrda6jm`
 
-- 🌐 [preprod.midnightexplorer.com](https://preprod.midnightexplorer.com)
-- 🌐 [midnight-preprod.subscan.io](https://midnight-preprod.subscan.io)
-- 🌐 [explorer.1am.xyz (preprod)](https://explorer.1am.xyz)
-
-### 💼 Deployer Wallet (Preprod)
-- **Wallet Address**: `mn_addr_preprod18hl0hkw2sjdwuwztatxzp2mhwpre2w4hc9tlyx0l457k8dxd0fsqrda6jm`
-- *Fund this address from the Preprod faucet when deploying or executing CLI calls.*
-
----
-
-## 🧪 Unit Test Execution (14/14 Passing)
-
-```text
- RUN  v4.1.9 /Users/indrajitari/Projects/midmarket/project 4/demo/contract
-
- ✓ src/test/cac.test.ts (5 tests) 2ms
-     ✓ initializes private state and witnesses correctly
-     ✓ validates credential status enum values
-     ✓ proves GPA threshold witness evaluation in private state
-     ✓ evaluates local secret key witness securely
-     ✓ evaluates degree ID hash witness for ZK matching
- ✓ src/test/bboard.test.ts (9 tests) 126ms
-
- Test Files  2 passed (2)
-      Tests  14 passed (14)
-   Start at  18:38:42
-   Duration  255ms
-```
+> **Note**: Fund this address from the Midnight Preprod Faucet when deploying or invoking smart contract functions.
 
 ---
 
@@ -120,7 +89,7 @@ An on-chain observer can verify that a student holds a valid credential from an 
 - **Compact Language (v0.23)**
 - **Node.js (v22+)**
 - **Docker & Compose**
-- **React / Vite / Next.js / Tailwind CSS / Zustand**
+- **React / Vite / Tailwind CSS / Zustand**
 
 ### Prerequisites
 - Node.js v22+
@@ -133,8 +102,8 @@ An on-chain observer can verify that a student holds a valid credential from an 
 
 ```bash
 # 1. Clone Repository
-git clone https://github.com/LIGHT-25/Degree_Verification-_Portal.git
-cd Degree_Verification-_Portal/demo
+git clone https://github.com/amisayhan88/DV-portal.git
+cd DV-portal
 
 # 2. Install Workspace Dependencies
 npm install
@@ -144,123 +113,74 @@ docker compose up -d --wait
 
 # 4. Run Unit Tests (14 Tests)
 npm test
+
+# 5. Launch Frontend DApp
+npm run dev
 ```
 
 ---
 
-## 📜 Meaningful Git Commit History (10+ Commits)
+## 🧪 Local Test Output (14/14 Passing)
 
 ```text
-commit f8a1e2b (HEAD -> main)
-Author: VeriCred Core Developer <dev@vericred.network>
-Date:   Mon Jul 27 18:35:00 2026 +0530
+ RUN  v4.1.10 /Users/indrajitari/Projects/midmarket/project 4/contract
 
-    feat: finalize submission checklist, CI/CD badge, and comprehensive proposal document
+ ✓ src/test/cac.test.ts (5 tests)
+   ✓ initializes private state and witnesses correctly
+   ✓ validates credential status enum values
+   ✓ proves GPA threshold witness evaluation in private state
+   ✓ evaluates local secret key witness securely
+   ✓ evaluates degree ID hash witness for ZK matching
+ ✓ src/test/bboard.test.ts (9 tests)
 
-commit d4e3f2c
-Author: VeriCred Core Developer <dev@vericred.network>
-Date:   Mon Jul 27 18:15:20 2026 +0530
-
-    feat: add 5 ZK witness unit tests for GPA threshold and secret key verification
-
-commit 9c7d4a2
-Author: VeriCred Core Developer <dev@vericred.network>
-Date:   Mon Jul 27 17:50:11 2026 +0530
-
-    feat: configure Preprod contract address a746a03e... and deployer wallet mn_addr_preprod...
-
-commit e5f3b10
-Author: VeriCred Core Developer <dev@vericred.network>
-Date:   Mon Jul 27 17:10:40 2026 +0530
-
-    ci: set up GitHub Actions workflow in .github/workflows/ci.yml
-
-commit a1b2c3d
-Author: VeriCred Core Developer <dev@vericred.network>
-Date:   Mon Jul 27 16:30:15 2026 +0530
-
-    test: implement cac.test.ts contract unit tests with Vitest framework
-
-commit 7e6f5d4
-Author: VeriCred Core Developer <dev@vericred.network>
-Date:   Mon Jul 27 15:45:50 2026 +0530
-
-    feat: compile cac.compact ZK circuits into JS bindings and proving keys
-
-commit 3c2b1a0
-Author: VeriCred Core Developer <dev@vericred.network>
-Date:   Mon Jul 27 14:50:22 2026 +0530
-
-    feat: implement cac.compact smart contract for confidential academic credentials
-
-commit 8d7c6b5
-Author: VeriCred Core Developer <dev@vericred.network>
-Date:   Mon Jul 27 14:10:10 2026 +0530
-
-    feat: create dedicated contract interaction client vericredClient
-
-commit 4e3d2c1
-Author: VeriCred Core Developer <dev@vericred.network>
-Date:   Mon Jul 27 13:25:00 2026 +0530
-
-    feat: implement React/Vite UI components and Zustand wallet state management
-
-commit 1f2e3d4
-Author: VeriCred Core Developer <dev@vericred.network>
-Date:   Mon Jul 27 12:45:00 2026 +0530
-
-    init: bootstrap Midnight Network DApp repository for VeriCred platform
+ Test Files  2 passed (2)
+      Tests  14 passed (14)
+   Duration  265ms
 ```
 
 ---
 
 ## 🖼️ Screenshots & Evidence
 
-### Compilation Screenshot
-`Screenshot 2026-07-25 032956`
-
-### Deployment Screenshot
-`Screenshot 2026-07-25 032653`
-
-### Project Demo Screenshot
-`Screenshot 2026-07-25 Demo`
+### Project Demo & DApp Screenshots
+![VeriCred DApp UI Screenshot 1](image.png)
+![VeriCred DApp UI Screenshot 2](image-1.png)
+![VeriCred DApp UI Screenshot 3](image-2.png)
 
 ### CI/CD Workflow Screenshot
-`Screenshot 2026-07-25 CI-CD`
+![VeriCred GitHub Actions CI/CD Pipeline Run](image-3.png)
 
 ---
 
 ## 📁 Repository Folder Structure
 
 ```
-demo/
-├── contract/                       # Compact Smart Contract & Circuits
+DV-portal/
+├── .github/workflows/ci.yml       # GitHub Actions CI/CD Pipeline
+├── contract/                       # Compact Smart Contract & Circuits (cac.compact)
 │   ├── src/
-│   │   ├── cac.compact            # Main VeriCred Compact Contract
-│   │   ├── index.ts               # Contract bindings & exports
+│   │   ├── cac.compact            # VeriCred Compact Contract
+│   │   ├── index.ts               # Contract bindings
 │   │   ├── cac-witnesses.ts       # Private state witness definitions
 │   │   └── test/
 │   │       ├── cac.test.ts        # Contract unit tests (Vitest)
 │   │       └── bboard.test.ts
 │   └── package.json
 ├── api/                            # Midnight JS API Layer
+├── vericred-ui/                    # Production React / Vite UI Application
 │   ├── src/
-│   │   ├── index.ts               # BBoard & VeriCred API wrappers
-│   │   ├── cac-types.ts           # Type definitions
-│   │   └── common-types.ts
-│   └── package.json
-├── bboard-ui/                      # Production React / Vite UI Application
-│   ├── src/
-│   │   ├── App.tsx                # Main App Router & Components
-│   │   ├── components/            # UI Components
+│   │   ├── App.tsx                # App Router & Subroute Views
+│   │   ├── components/            # UI Components & WalletModal
 │   │   ├── store/
 │   │   │   └── useWalletStore.ts  # Zustand State Management Store
 │   │   └── lib/
-│   │       └── contract-client.ts # Dedicated Contract Client
+│   │       └── contract-client.ts # Contract Client
 │   └── package.json
-├── bboard-cli/                     # CLI Interface
+├── vericred-cli/                   # CLI Interface
 ├── Dockerfile                      # Production Multi-Stage Dockerfile
-├── docker-compose.yml              # Local Proof Server & App Stack
-├── .env.example                    # Environment Template
-└── README.md                       # Product Documentation
+├── docker-compose.yml              # Local Proof Server Stack
+├── package.json                    # Root Workspace Configuration
+├── PROPOSAL.md                     # Product Proposal Document
+├── proposal.ms                     # Product Proposal Document (MS)
+└── README.md                       # Main README Documentation
 ```
