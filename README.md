@@ -16,14 +16,6 @@ Level 1 delivered a working Compact contract, local unit tests, and a Preprod de
 
 ---
 
-## 👥 Lead Maintainer & Contributor
-
-| Contributor | GitHub Profile | Role |
-| --- | --- | --- |
-| **amisayhan88** | [@amisayhan88](https://github.com/amisayhan88) | Lead Architect & Project Contributor |
-
----
-
 ## 📋 Submission Checklist & Requirement Audit
 
 | Requirement / Checklist Item | Status | Verification Detail |
